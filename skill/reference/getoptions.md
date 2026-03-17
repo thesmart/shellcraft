@@ -5,55 +5,137 @@ POSIX-compliant shell script.
 
 ## Usage Example
 
+The example below covers all CLI constructs from the args convention EBNF: commands, subcommands,
+short/long options, positional arguments, and the `--` separator.
+
 ```sh
-#!/bin/sh
-set -eu
+#!/usr/bin/env sh
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VENDOR_DIR="$(${SCRIPT_DIR}/vendor)"
+VENDOR_DIR="${SCRIPT_DIR}/vendor"
 
-# Load getoptions library
 eval "$(sh "${VENDOR_DIR}/getoptions.sh" -)"
 
-VERSION="0.1.0"
-
+# Top-level: declares commands and global options.
+# setup REST: positionals/command+args are collected into REST, then eval'd into $@
 parser_definition() {
-  setup   REST help:usage -- "Usage: example.sh [options]... [arguments]..." ''
-  msg -- 'Options:'
-  flag    FLAG    -f --flag                 -- "takes no arguments"
-  param   PARAM   -p --param                -- "takes one argument"
-  option  OPTION  -o --option on:"default"  -- "takes one optional argument"
-  disp    :usage     --help
-  disp    VERSION    --version
+  setup   REST help:usage -- "Usage: tool [-v] <command> [...]" ''
+  msg -- 'Commands:'
+  cmd run    -- "run a command with tool options applied"
+  cmd remote -- "manage remotes"
+  msg -- '' 'Options:'
+  flag    VERBOSE  -v --verbose         -- "enable verbose output"
+  disp    :usage      --help
 }
 
+# 'run' command: options parsed by tool, then '--' separates the spawned command
+# Everything after '--' lands verbatim in $@, so the spawned command's own flags are preserved
+parser_definition_run() {
+  setup   REST help:usage -- "Usage: tool run [-n] [-e ENV] [-- cmd [args...]]" ''
+  msg -- 'Options:'
+  flag    DRY_RUN  -n --dry-run         -- "print command without executing"
+  param   ENV      -e --env             -- "environment name (e.g. prod, dev)"
+  disp    :usage      --help
+}
+
+# 'remote' command: declares subcommands
+parser_definition_remote() {
+  setup   REST help:usage -- "Usage: tool remote <subcommand> [...]" ''
+  msg -- 'Subcommands:'
+  cmd add    -- "add a remote"
+  cmd remove -- "remove a remote"
+  disp    :usage      --help
+}
+
+# 'remote add' subcommand: long option with short alias, two positional args
+parser_definition_remote_add() {
+  setup   REST help:usage -- "Usage: tool remote add [-f] <name> <url>" ''
+  msg -- 'Options:'
+  flag    FETCH    -f --fetch           -- "fetch after adding"
+  disp    :usage      --help
+}
+
+# 'remote remove' subcommand: one positional arg, no extra options
+parser_definition_remote_remove() {
+  setup   REST help:usage -- "Usage: tool remote remove <name>" ''
+  disp    :usage      --help
+}
+
+# --- Dispatch ---
+
+# Parse global options; remaining args (command + its args) land in $@
 eval "$(getoptions parser_definition) exit 1"
 
-echo "FLAG: $FLAG, PARAM: $PARAM, OPTION: $OPTION"
-printf '%s\n' "$@" # rest arguments
+cmd=$1; shift
+case $cmd in
+  run)
+    # Parse 'run' options; everything after '--' lands in $@ as the command to spawn
+    eval "$(getoptions parser_definition_run) exit 1"
+    [ $# -eq 0 ] && { echo "error: no command given after '--'" >&2; exit 1; }
+    if [ "$DRY_RUN" ]; then
+      echo "would run (ENV=${ENV:-}): $*"
+    else
+      exec "$@"   # spawn the command, preserving all its flags verbatim
+    fi
+    ;;
+
+  remote)
+    eval "$(getoptions parser_definition_remote) exit 1"
+    subcmd=$1; shift
+    case $subcmd in
+      add)
+        eval "$(getoptions parser_definition_remote_add) exit 1"
+        name=$1 url=$2      # positional args
+        echo "remote add: FETCH=$FETCH name=$name url=$url"
+        ;;
+      remove)
+        eval "$(getoptions parser_definition_remote_remove) exit 1"
+        name=$1             # positional arg
+        echo "remote remove: name=$name"
+        ;;
+      *)
+        echo "error: unknown subcommand: $subcmd" >&2; exit 1 ;;
+    esac
+    ;;
+
+  *)
+    echo "error: unknown command: $cmd" >&2; exit 1 ;;
+esac
 ```
 
-It generates a simple option parser code internally and parses the following arguments:
+### Invocation patterns
 
 ```console
-$ example.sh -f --flag -p value --param value -o --option -ovalue --option=value 1 2 3
-FLAG: 1, PARAM: value, OPTION: value
-1
-2
-3
+# '--' terminates tool option parsing; everything after is the spawned command + its own flags
+$ tool -v run --env=prod -- make test --keep-going -j4
+
+# short flags grouped; spawned command also has flags
+$ tool run -ne dev -- node server.js --port 8080 --watch
+
+# dry run: print without executing
+$ tool run -n -- grep -r "TODO" . --include="*.sh"
+
+# command + subcommand + long flag + positionals
+$ tool remote add --fetch origin https://example.com
+
+# command + subcommand + positional
+$ tool remote remove upstream
+
+# help at any level
+$ tool --help
+$ tool run --help
+$ tool remote add --help
 ```
 
-Automatic help generation is also provided.
+### Option types
 
-```console
-$ example.sh --help
+| Type     | Declaration                        | Argument | Example                     |
+| -------- | ---------------------------------- | -------- | --------------------------- |
+| `flag`   | `flag VAR -f --flag`               | none     | `-f`, `--flag`              |
+| `param`  | `param VAR -p --param`             | required | `-p val`, `--param val`     |
+| `option` | `option VAR -o --opt on:"default"` | optional | `-o`, `-o val`, `--opt=val` |
+| `disp`   | `disp :usage --help`               | none     | `--help` (prints and exits) |
+| `cmd`    | `cmd subcmd -- "desc"`             | n/a      | first positional dispatch   |
 
-Usage: example.sh [options]... [arguments]...
-
-Options:
-  -f, --flag                  takes no arguments
-  -p, --param PARAM           takes one argument
-  -o, --option[=OPTION]       takes one optional argument
-      --help
-      --version
-```
+Automatic help generation is also provided via `disp :usage --help`.
