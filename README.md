@@ -14,9 +14,27 @@ Rocky Linux, Slackware, SUSE Linux Enterprise (SLES), Ubuntu LTS, Ubuntu Pro, Vo
 
 ---
 
+## Installation
+
+### Skillfish
+
+```sh
+skillfish add thesmart/shellcraft/skill
+```
+
+### Manual
+
+Clone into your Claude Code skills directory:
+
+```sh
+git clone https://github.com/thesmart/shellcraft.git ~/.claude/skills/shellcraft
+```
+
+---
+
 ## License Terms
 
-This software is licensed under the [PolyForm Perimeter License 1.0.0](./LICENSE).
+This software is licensed under the [PolyForm Internal Use License 1.0.0](./LICENSE).
 
 Informal license summary (non-binding):
 

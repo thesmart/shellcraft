@@ -1,0 +1,104 @@
+#!/bin/sh
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "${SCRIPT_DIR}/../vendor/getoptions.sh" # @inline getoptions
+
+die() { echo "error: $*" >&2; exit 1; }
+
+# Reject paths with directory traversal sequences
+validate_path() {
+  case "$1" in
+    *../*|*/..|../*|..) die "unsafe path: $1" ;;
+  esac
+}
+
+# Top-level: declares commands and global options.
+# setup REST: positionals/command+args are collected into REST, then eval'd into $@
+parser_definition() {
+  setup   REST help:usage -- "Usage: tool [-v] <command> [...]" ''
+  msg -- 'Commands:'
+  cmd run    -- "run a command with tool options applied"
+  cmd remote -- "manage remotes"
+  msg -- '' 'Options:'
+  flag    VERBOSE  -v --verbose         -- "enable verbose output"
+  disp    :usage      --help
+}
+
+# 'run' command: options parsed by tool, then '--' separates the spawned command
+# Everything after '--' lands verbatim in $@, so the spawned command's own flags are preserved
+parser_definition_run() {
+  setup   REST help:usage -- "Usage: tool run [-n] [-e ENV] [-- cmd [args...]]" ''
+  msg -- 'Options:'
+  flag    DRY_RUN  -n --dry-run         -- "print command without executing"
+  param   ENV      -e --env             -- "environment name (e.g. prod, dev)"
+  disp    :usage      --help
+}
+
+# 'remote' command: declares subcommands
+parser_definition_remote() {
+  setup   REST help:usage -- "Usage: tool remote <subcommand> [...]" ''
+  msg -- 'Subcommands:'
+  cmd add    -- "add a remote"
+  cmd remove -- "remove a remote"
+  disp    :usage      --help
+}
+
+# 'remote add' subcommand: long option with short alias, two positional args
+parser_definition_remote_add() {
+  setup   REST help:usage -- "Usage: tool remote add [-f] <name> <url>" ''
+  msg -- 'Options:'
+  flag    FETCH    -f --fetch           -- "fetch after adding"
+  disp    :usage      --help
+}
+
+# 'remote remove' subcommand: one positional arg, no extra options
+parser_definition_remote_remove() {
+  setup   REST help:usage -- "Usage: tool remote remove <name>" ''
+  disp    :usage      --help
+}
+
+eval "$(getoptions parser_definition parse)"
+parse "$@"
+eval "set -- $REST"
+
+# --- Script Body ---
+
+cmd=$1; shift
+case $cmd in
+  run)
+    # parses `run` command options
+    eval "$(getoptions parser_definition_run) exit 1"
+    if [ "$DRY_RUN" ]; then
+      echo "would run (ENV=${ENV:-}): $*"
+    else
+      [ $# -eq 0 ] && die "no command specified after --"
+      exec "$@"   # spawn the command, preserving all its flags verbatim
+    fi
+    ;;
+
+  remote)
+    # parses `remote` command options
+    eval "$(getoptions parser_definition_remote) exit 1"
+    subcmd=$1; shift
+    case $subcmd in
+      add)
+        # parses `remote add` subcommand options
+        eval "$(getoptions parser_definition_remote_add) exit 1"
+        name=$1 url=$2
+        validate_path "$url"
+        echo "remote add: FETCH=$FETCH name=$name url=$url"
+        ;;
+      remove)
+        # parses `remote remove` subcommand options
+        eval "$(getoptions parser_definition_remote_remove) exit 1"
+        name=$1
+        echo "remote remove: name=$name"
+        ;;
+      *)
+        echo "error: unknown subcommand: $subcmd" >&2; exit 1 ;;
+    esac
+    ;;
+
+  *)
+    echo "error: unknown command: $cmd" >&2; exit 1 ;;
+esac

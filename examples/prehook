@@ -1,0 +1,33 @@
+#!/bin/sh
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "${SCRIPT_DIR}/../vendor/getoptions.sh" # @inline getoptions
+
+die() { echo "error: $*" >&2; exit 1; }
+
+# Extension that logs each parsed option via prehook
+extension() {
+	prehook() {
+		helper=$1 varname_or_action=$2
+		shift 2
+		echo "[debug] $helper $varname_or_action $*" >&2
+		invoke "$helper" "$varname_or_action" "$@"
+	}
+}
+
+parser_definition() {
+	extension
+	setup   REST help:usage -- \
+		"Usage: prehook [options...] [arguments...]" ''
+	msg -- 'Options:'
+	flag    FLAG   -f --flag  -- "a simple flag"
+	param   NAME   -n --name  -- "a name parameter"
+	disp    :usage -h --help
+}
+
+eval "$(getoptions parser_definition parse)"
+parse "$@"
+eval "set -- $REST"
+
+echo "FLAG: $FLAG"
+echo "NAME: $NAME"
