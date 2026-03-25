@@ -20,6 +20,32 @@ Shell scripts shall:
 - **NEVER** write a path that isn't explicit via args
 - **NEVER** use `set -o pipefail` (not POSIX-standard)
 
+### Output
+
+- prefer `printf '%s\n' "$msg"` over `echo "$msg"` — `echo` behavior varies across shells
+- use `printf '%s'` (no newline) when building partial output
+- errors and diagnostics to stderr (`>&2`), data to stdout
+
+### Naming
+
+- functions and variables: `snake_case`
+- constants and env vars: `UPPER_SNAKE_CASE`
+- file names: `kebab-case` (lowercase, hyphens)
+- use `readonly` for constants set once at startup
+
+### Exit Codes
+
+| Code  | Meaning                          |
+| ----- | -------------------------------- |
+| `0`   | Success                          |
+| `1`   | General error                    |
+| `2`   | Usage / invalid arguments        |
+| `126` | Command found but not executable |
+| `127` | Command not found                |
+| `130` | Interrupted (SIGINT / Ctrl-C)    |
+
+Scripts should exit `0` on success, `2` on usage errors, and `1` on all other failures.
+
 Best practices:
 
 - scripts should be idempotent where applicable

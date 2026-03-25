@@ -16,8 +16,18 @@ Read all the following files into context:
 1. [Shell Conventions](./reference/conventions.md)
 2. [Shell Utilities](./reference/utilities.md)
 3. [Shell Options Parsing](./reference/getoptions.md)
+4. [Bashisms to Avoid](./reference/bashisms.md)
+5. [Logging & Verbosity](./reference/logging.md)
+6. [Trap & Cleanup](./reference/traps.md)
+7. [Input Validation](./reference/validation.md)
+8. [Temp Files & Atomic Writes](./reference/tempfiles.md)
+9. [Pipelines & Line Processing](./reference/pipelines.md)
+10. [Strings & Pattern Matching](./reference/strings.md)
 
 # Script Authoring Procedure
+
+All conventions and utilities target **POSIX.1-2017** (IEEE Std 1003.1-2017), Shell & Utilities
+volume.
 
 Follow these steps to generate a portable, well-structured POSIX `sh` shell script.
 
