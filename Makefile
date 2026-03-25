@@ -38,9 +38,10 @@ tag:
 	TAG="v$$VERSION"; \
 	if git rev-parse "$$TAG" >/dev/null 2>&1; then echo "Error: tag $$TAG already exists" >&2; exit 1; fi; \
 	echo "--- tag: $$TAG ---"; \
-	git tag "$$TAG" || { echo "Error: git tag failed" >&2; exit 1; }; \
+	git tag -m "$$TAG" "$$TAG" || { echo "Error: git tag failed" >&2; exit 1; }; \
 	echo "--- tag: verify ---"; \
 	git tag -l "$$TAG"; \
+	git push origin "$$TAG"; \
 	echo "--- tag: done ---"
 
 tokens:
