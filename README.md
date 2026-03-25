@@ -42,7 +42,7 @@ without a clear workflow. Shellcraft takes a different approach:
 ### Skillfish
 
 ```sh
-skillfish add thesmart/shellcraft/skill
+skillfish add thesmart/shellcraft
 ```
 
 ### Manual
