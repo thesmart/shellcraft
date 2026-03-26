@@ -1,9 +1,9 @@
 #!/bin/sh
 
+die() { printf '%s\n' "error: $*" >&2; exit 1; }
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 . "${SCRIPT_DIR}/../vendor/getoptions.sh" # @inline getoptions
-
-die() { echo "error: $*" >&2; exit 1; }
 
 parser_definition() {
 	setup REST help:usage -- "Usage: trivial [options] [arguments]"
@@ -11,9 +11,7 @@ parser_definition() {
 	disp :usage -h --help
 }
 
-eval "$(getoptions parser_definition parse)"
-parse "$@"
-eval "set -- $REST"
+eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
 
 # --- Script Body ---
 echo "Hello world!"

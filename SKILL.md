@@ -54,36 +54,35 @@ Follow the plan and write the script using this template:
 ```sh
 #!/bin/sh
 
+# --- helpers ---
+
+die() { printf '%s\n' "error: $*" >&2; exit 1; }
+
 # --- imports ---
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 . "${SCRIPT_DIR}/path/to/getoptions.sh" # @inline getoptions
 
-# --- helpers ---
+# --- getoptions ---
 
 parser_definition() {
+	# Replace {{SCRIPT_NAME}} with the script's file name
 	setup REST help:usage -- "Usage: {{SCRIPT_NAME}} [options] [arguments]"
 	msg -- 'Options:'
 	disp :usage -h --help
 }
 
-die() { echo "error: $*" >&2; exit 1; }
+# If script requires any arguments, uncomment next line:
+# [ $# -eq 0 ] && set -- --help
+# Omit if script has works with zero arguments.
 
-# --- getoptions ---
-
-eval "$(getoptions parser_definition parse)"
-parse "$@"
-eval "set -- $REST"
+eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
 
 # --- script ---
 
 # WRITE SCRIPT HERE
 
 ```
-
-> NOTE: replace `{{SCRIPT_NAME}}` with the script's file name.
-
-Replace `{{SCRIPT_NAME}}` with the script's file name.
 
 Make the script executable (`chmod ug+x`) if needed.
 
