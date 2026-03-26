@@ -12,7 +12,7 @@ Shell scripts shall **ALWAYS**:
 - use [getoptions](./getoptions.md) for parameter parsing
   - validate all arguments/options via `parser_definition`
 - use built-in [utilities](./utilities.md), or verify before using a non built-in
-- source using [inlining](./inlining.md)
+- source using [imports](./imports.md)
 
 Shell scripts shall:
 

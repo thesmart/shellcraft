@@ -58,10 +58,12 @@ Follow the plan and write the script using this template:
 
 die() { printf '%s\n' "error: $*" >&2; exit 1; }
 
-# --- imports ---
+# --- imports (see: reference/imports.md) ---
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/path/to/getoptions.sh" # @inline getoptions
+# standalone: tag with @inline for build step:
+#  . "${SCRIPT_DIR}/path/to/getoptions.sh" # @inline getoptions
+. "${SCRIPT_DIR}/path/to/getoptions.sh"
 
 # --- getoptions ---
 
@@ -97,12 +99,12 @@ Make the script executable (`chmod ug+x`) if needed.
 
 Fix any issues encountered and try again.
 
-## Step 4: Build
+## Step 4: Build (standalone only)
 
-Build the script by running `inline`:
+Skip this step for library scripts. For standalone scripts, inline all `@inline`-tagged imports:
 
 ```console
-vendor/inline --target path/to/script --inline path/to/getoptions.sh --key getoptions --overwrite
+vendor/inline --target path/to/script --inline path/to/lib.sh --key <key> --overwrite
 ```
 
 ## Step 5: Install

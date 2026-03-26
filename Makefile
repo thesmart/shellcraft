@@ -28,7 +28,7 @@ bump-major bump-minor bump-patch:
 	git commit -m "v$$NEW" || { echo "Error: git commit failed" >&2; exit 1; }; \
 	echo "--- $@: verify ---"; \
 	cat VERSION; \
-	git log --oneline -1; \
+	git --no-pager log --oneline -1; \
 	echo "--- $@: done ---"
 
 tag:
