@@ -40,7 +40,7 @@ tag:
 	echo "--- tag: $$TAG ---"; \
 	git tag -m "$$TAG" "$$TAG" || { echo "Error: git tag failed" >&2; exit 1; }; \
 	echo "--- tag: verify ---"; \
-	git tag -l "$$TAG"; \
+	git --no-pager tag -l "$$TAG"; \
 	git push origin "$$TAG"; \
 	echo "--- tag: done ---"
 
