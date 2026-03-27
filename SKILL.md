@@ -1,9 +1,10 @@
 ---
 name: shellcraft
 description:
-  "Activate when the user asks to write / automate with a script. Triggers: shell script, sh
-  script, bash script, CLI tool, command-line tool, getoptions argument parsing. Do NOT activate
-  for Python, Node.js, or other non-shell scripting tasks."
+  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds,
+  and production patterns (traps, temp files, logging, pipelines).
+  Triggers: shell script, sh script, bash script, CLI tool, command-line tool, getoptions,
+  argument parsing. Do NOT activate for Python, Node.js, or other non-shell scripting tasks."
 license: PolyForm Internal Use License 1.0.0
 compatibility: Designed for Claude Code (and compatible)
 metadata:
