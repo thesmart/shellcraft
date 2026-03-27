@@ -1,10 +1,10 @@
 ---
 name: shellcraft
 description:
-  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds,
-  and production patterns (traps, temp files, logging, pipelines).
-  Triggers: shell script, sh script, bash script, CLI tool, command-line tool, getoptions,
-  argument parsing. Do NOT activate for Python, Node.js, or other non-shell scripting tasks."
+  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and
+  production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script,
+  bash script, CLI tool, command-line tool, getoptions, argument parsing. Do NOT activate for
+  Python, Node.js, or other non-shell scripting tasks."
 license: PolyForm Internal Use License 1.0.0
 compatibility: Designed for Claude Code (and compatible)
 metadata:
@@ -12,27 +12,39 @@ metadata:
   version: "1.0"
 ---
 
-Read all the following files into context:
+# Agent Skill: Shellcraft
+
+Read these core references into context:
 
 1. [Shell Conventions](./reference/conventions.md)
 2. [Shell Utilities](./reference/utilities.md)
 3. [Shell Options Parsing](./reference/getoptions.md)
-4. [Bashisms to Avoid](./reference/bashisms.md)
-5. [Logging & Verbosity](./reference/logging.md)
-6. [Trap & Cleanup](./reference/traps.md)
-7. [Input Validation](./reference/validation.md)
-8. [Temp Files & Atomic Writes](./reference/tempfiles.md)
-9. [Pipelines & Line Processing](./reference/pipelines.md)
-10. [Strings & Pattern Matching](./reference/strings.md)
 
-# Script Authoring Procedure
+Read these additional references only when the script requires them:
+
+- [Bashisms to Avoid](./reference/bashisms.md) — porting a bash script to POSIX, or reviewing
+  existing code for portability
+- [Logging & Verbosity](./reference/logging.md) — script needs `--verbose`, `--quiet`, timestamped
+  logs, or structured stderr output
+- [Trap & Cleanup](./reference/traps.md) — script creates resources that must be cleaned up on
+  exit, error, or interrupt
+- [Input Validation](./reference/validation.md) — script validates files, paths, numbers, or enum
+  values beyond what getoptions handles
+- [Temp Files & Atomic Writes](./reference/tempfiles.md) — script uses `mktemp`, writes
+  intermediate files, or must write output atomically
+- [Pipelines & Line Processing](./reference/pipelines.md) — script reads lines from files or
+  commands, chains filters, or uses `xargs`/FIFOs
+- [Strings & Pattern Matching](./reference/strings.md) — script manipulates strings (prefix/suffix
+  stripping, `case` patterns, regex, here-docs)
+
+## Script Authoring Procedure
 
 All conventions and utilities target **POSIX.1-2017** (IEEE Std 1003.1-2017), Shell & Utilities
 volume.
 
 Follow these steps to generate a portable, well-structured POSIX `sh` shell script.
 
-## Step 1: Make a Plan
+### Step 1: Make a Plan
 
 1. Define the goal clearly
    1. Write one-sentence summary: what the script does.
@@ -48,7 +60,7 @@ Follow these steps to generate a portable, well-structured POSIX `sh` shell scri
 
 Evaluate the plan and ensure the it aligns with end-user's stated intent.
 
-## Step 2: Write the Script
+### Step 2: Write the Script
 
 Follow the plan and write the script using this template:
 
@@ -69,10 +81,10 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # --- getoptions ---
 
 parser_definition() {
-	# Replace {{SCRIPT_NAME}} with the script's file name
-	setup REST help:usage -- "Usage: {{SCRIPT_NAME}} [options] [arguments]"
-	msg -- 'Options:'
-	disp :usage -h --help
+   # Replace {{SCRIPT_NAME}} with the script's file name
+   setup REST help:usage -- "Usage: {{SCRIPT_NAME}} [options] [arguments]"
+   msg -- 'Options:'
+   disp :usage -h --help
 }
 
 # If script requires any arguments, uncomment next line:
@@ -89,7 +101,7 @@ eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
 
 Make the script executable (`chmod ug+x`) if needed.
 
-## Step 3: Verification
+### Step 3: Verification
 
 1. Validate syntax: `sh -n script-name`
 2. Verify `--help` output is clear and complete.
@@ -100,7 +112,7 @@ Make the script executable (`chmod ug+x`) if needed.
 
 Fix any issues encountered and try again.
 
-## Step 4: Build (standalone only)
+### Step 4: Build (standalone only)
 
 Skip this step for library scripts. For standalone scripts, inline all `@inline`-tagged imports:
 
@@ -108,7 +120,7 @@ Skip this step for library scripts. For standalone scripts, inline all `@inline`
 vendor/inline --target path/to/script --inline path/to/lib.sh --key <key> --overwrite
 ```
 
-## Step 5: Install
+### Step 5: Install
 
 Read `$PATH` and `$HOME`. Select two or three of the most suitable locations for potentially
 installing the script. Prefer at least one path in `$HOME`. Ask the end-user if they would like to
