@@ -1,6 +1,6 @@
 # Shellcraft Agent Skill
 
-![context: 7.1k tokens](https://img.shields.io/badge/context-7.1k_tokens-blue)
+![context: 7.4k tokens](https://img.shields.io/badge/context-7.4k_tokens-blue)
 
 An opinionated agent skill for writing **POSIX.1-2017** compliant shell scripts (i.e. `sh`, not
 `bash`, `zsh`, etc.).
