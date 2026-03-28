@@ -4,7 +4,6 @@ SHELLCHECK = shellcheck
 
 check-deps:
 	@command -v npx >/dev/null 2>&1 || { echo "Error: npx not found. Install Node.js: https://nodejs.org/" >&2; exit 1; }
-	@command -v yq >/dev/null 2>&1 || { echo "Error: yq not found. Install yq: https://github.com/mikefarah/yq#install" >&2; exit 1; }
 
 check:
 	@echo "--- check: shellcheck vendor/ examples/ ---"
@@ -35,10 +34,8 @@ bump-major bump-minor bump-patch: check-deps
 	git --no-pager log --oneline -1; \
 	echo "--- $@: done ---"
 
-set-skill-version: check-deps
-	@V=$$(cat VERSION); \
-	yq -i ".metadata.version = \"$$V\"" SKILL.md; \
-	echo "--- set-skill-version: SKILL.md -> $$V ---"
+set-skill-version:
+	@vendor/set-skill-version SKILL.md "$$(cat VERSION)"
 
 update-skills: check-deps
 	@echo "--- update-skills ---"

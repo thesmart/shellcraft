@@ -1,15 +1,11 @@
 ---
 name: shellcraft
-description:
-  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and
-  production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script,
-  bash script, CLI tool, command-line tool, getoptions, argument parsing. Do NOT activate for
-  Python, Node.js, or other non-shell scripting tasks."
+description: "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script, bash script, CLI tool, command-line tool, getoptions, argument parsing, Makefile recipe, cron job, init script, git hook, CI/CD shell step, deployment script, automation task. Do NOT activate for Python, Node.js, or other non-shell scripting tasks."
 license: PolyForm Internal Use License 1.0.0
 compatibility: Designed for Claude Code (and compatible)
 metadata:
   author: github.com/thesmart
-  version: "1.0"
+  version: "1.3.0"
 ---
 
 # Agent Skill: Shellcraft
@@ -36,6 +32,17 @@ Read these additional references only when the script requires them:
   commands, chains filters, or uses `xargs`/FIFOs
 - [Strings & Pattern Matching](./reference/strings.md) — script manipulates strings (prefix/suffix
   stripping, `case` patterns, regex, here-docs)
+- [Imports](./reference/imports.md) — sourcing libraries, resolving paths relative to `SCRIPT_DIR`
+- [Capturing stderr](./reference/capture-stderr.md) — capturing error output from a failing command
+  while checking its exit status
+- [Locked Execution](./reference/locks.md) — exclusive locking when only one instance of a script
+  should run at a time
+- [Retry Loops](./reference/retry-loops.md) — retrying transient failures (network calls, lock
+  contention)
+- [Rollback](./reference/rollback.md) — undo-on-failure for scripts that make multiple changes that
+  should be all-or-nothing
+- [Advanced getoptions](./reference/getoptions-advanced.md) — less common getoptions features (read
+  only when the specific feature is needed)
 
 ## Script Authoring Procedure
 
