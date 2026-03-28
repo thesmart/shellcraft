@@ -8,31 +8,30 @@
 
 die() { printf '%s\n' "error: $*" >&2; exit 1; }
 
-# --- imports ---
+# --- usage ---
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/getoptions.sh"
-
-# --- getoptions ---
-
-parser_definition() {
-	setup REST help:usage -- "Usage: set-skill-version [options] <skill-file> <version>" \
-		'' \
-		'Updates the metadata.version field in a SKILL.md YAML frontmatter.' \
-		'Extracts frontmatter, mutates with yq, validates, formats with' \
-		'prettier, and writes back atomically.'
-	msg -- '' 'Options:'
-	disp :usage -h --help
+usage() {
+	printf '%s\n' \
+		"Usage: set-skill-version <skill-file> <version>" \
+		"" \
+		"Updates the metadata.version field in a SKILL.md YAML frontmatter." \
+		"Extracts frontmatter, mutates with yq, validates, formats with" \
+		"prettier, and writes back atomically." \
+		"" \
+		"Options:" \
+		"  -h, --help    show this help"
 }
 
-[ $# -eq 0 ] && set -- --help
+# --- parse arguments ---
 
-eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
+case "${1:-}" in
+	-h|--help) usage; exit 0 ;;
+esac
 
-# --- validate arguments ---
+[ $# -ge 2 ] || { usage >&2; exit 2; }
 
-skill_file="${1:?}"
-version="${2:?}"
+skill_file="$1"
+version="$2"
 
 [ -f "$skill_file" ] || die "file not found: $skill_file"
 [ -r "$skill_file" ] || die "file not readable: $skill_file"
