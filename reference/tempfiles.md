@@ -74,10 +74,10 @@ output_file="${TMPDIR}/output.json"
 
 Only these flags are reliably portable across GNU and BSD `mktemp`:
 
-| Flag | Meaning |
-|------|---------|
-| `-d` | Create a directory instead of a file |
-| (none) | Create a file, print its path |
+| Flag   | Meaning                              |
+| ------ | ------------------------------------ |
+| `-d`   | Create a directory instead of a file |
+| (none) | Create a file, print its path        |
 
 Avoid `-t template`, `-p dir`, `--suffix`, and `--tmpdir` — their behavior differs between GNU and
 BSD. Use the default and build paths from there.

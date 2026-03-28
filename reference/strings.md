@@ -5,22 +5,22 @@ external commands needed for basic string work.
 
 ## Parameter Expansion
 
-| Syntax | Meaning | Example |
-|--------|---------|---------|
-| `${var:-default}` | Use `default` if `var` is unset or empty | `port="${PORT:-8080}"` |
-| `${var:=default}` | Assign `default` if `var` is unset or empty | `${CACHE_DIR:=/tmp/cache}` |
-| `${var:+alternate}` | Use `alternate` if `var` is set and non-empty | `${VERBOSE:+--verbose}` |
-| `${var:?message}` | Exit with `message` if `var` is unset or empty | `${1:?usage: cmd <arg>}` |
-| `${#var}` | Length of `var` in characters | `[ "${#name}" -le 64 ]` |
+| Syntax              | Meaning                                        | Example                    |
+| ------------------- | ---------------------------------------------- | -------------------------- |
+| `${var:-default}`   | Use `default` if `var` is unset or empty       | `port="${PORT:-8080}"`     |
+| `${var:=default}`   | Assign `default` if `var` is unset or empty    | `${CACHE_DIR:=/tmp/cache}` |
+| `${var:+alternate}` | Use `alternate` if `var` is set and non-empty  | `${VERBOSE:+--verbose}`    |
+| `${var:?message}`   | Exit with `message` if `var` is unset or empty | `${1:?usage: cmd <arg>}`   |
+| `${#var}`           | Length of `var` in characters                  | `[ "${#name}" -le 64 ]`    |
 
 ### Stripping Prefixes and Suffixes
 
-| Syntax | Meaning | Example |
-|--------|---------|---------|
-| `${var#pattern}` | Remove shortest prefix match | `${path#*/}` → `bar/baz` |
-| `${var##pattern}` | Remove longest prefix match | `${path##*/}` → `baz` (basename) |
-| `${var%pattern}` | Remove shortest suffix match | `${file%.tar.gz}` → `data` |
-| `${var%%pattern}` | Remove longest suffix match | `${path%%/*}` → first component |
+| Syntax            | Meaning                      | Example                          |
+| ----------------- | ---------------------------- | -------------------------------- |
+| `${var#pattern}`  | Remove shortest prefix match | `${path#*/}` → `bar/baz`         |
+| `${var##pattern}` | Remove longest prefix match  | `${path##*/}` → `baz` (basename) |
+| `${var%pattern}`  | Remove shortest suffix match | `${file%.tar.gz}` → `data`       |
+| `${var%%pattern}` | Remove longest suffix match  | `${path%%/*}` → first component  |
 
 Common idioms:
 
@@ -105,10 +105,10 @@ esac
 
 POSIX defines two regex dialects. Know which tools use which:
 
-| Dialect | Tools | Syntax |
-|---------|-------|--------|
-| **BRE** (Basic) | `grep`, `sed`, `expr` | `\(group\)`, `\{n\}`, `\+` not standard |
-| **ERE** (Extended) | `grep -E`, `sed -E`, `awk` | `(group)`, `{n}`, `+`, `?`, `\|` |
+| Dialect            | Tools                      | Syntax                                  |
+| ------------------ | -------------------------- | --------------------------------------- |
+| **BRE** (Basic)    | `grep`, `sed`, `expr`      | `\(group\)`, `\{n\}`, `\+` not standard |
+| **ERE** (Extended) | `grep -E`, `sed -E`, `awk` | `(group)`, `{n}`, `+`, `?`, `\|`        |
 
 Key BRE gotchas:
 

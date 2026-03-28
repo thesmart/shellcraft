@@ -20,9 +20,9 @@ dependencies?**
   environments where the dependency tree is not present (e.g., CI, remote execution, `curl | sh`).
   Inlining is used as a build step to produce a distributable, self-contained file.
 
-During development, **always source** — even for scripts that will eventually be standalone. Inlined
-code bloats diffs and wastes context. Inline only as a build step when producing a distributable
-version.
+During development, **always source** — even for scripts that will eventually be standalone.
+Inlined code bloats diffs and wastes context. Inline only as a build step when producing a
+distributable version.
 
 ## `@inline` directive
 

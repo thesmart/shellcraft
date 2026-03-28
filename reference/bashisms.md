@@ -26,6 +26,6 @@ These constructs are **not POSIX** and will break on `dash`, `ash`, BusyBox, or 
 | `$RANDOM`               | `awk 'BEGIN{srand();print int(rand()*32768)}'`       | Not available in POSIX sh           |
 | `$LINENO`               | Not reliably available                               | Don't depend on it                  |
 | `trap cmd ERR`          | Check `$?` after commands                            | ERR trap is not POSIX               |
-| `[ "$a" == "$b" ]`     | `[ "$a" = "$b" ]`                                    | `==` inside `[` is a bashism        |
-| `test -a` / `test -o`  | `[ expr ] && [ expr ]` / `[ expr ] \|\| [ expr ]`   | `-a`/`-o` are obsolescent in POSIX  |
+| `[ "$a" == "$b" ]`      | `[ "$a" = "$b" ]`                                    | `==` inside `[` is a bashism        |
+| `test -a` / `test -o`   | `[ expr ] && [ expr ]` / `[ expr ] \|\| [ expr ]`    | `-a`/`-o` are obsolescent in POSIX  |
 | `which cmd`             | `command -v cmd`                                     | `which` is not POSIX; unreliable    |
