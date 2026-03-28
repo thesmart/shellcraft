@@ -1,8 +1,10 @@
-PREFIX ?= /usr/local
-SHELLSPEC = vendor/shellspec-0.28.1/shellspec
 SHELLCHECK = shellcheck
 
-.PHONY: test check check-test check-vendor fmt build install bump-major bump-minor bump-patch tag tokens
+.PHONY: check check-deps fmt bump-major bump-minor bump-patch set-skill-version update-skills tag tokens
+
+check-deps:
+	@command -v npx >/dev/null 2>&1 || { echo "Error: npx not found. Install Node.js: https://nodejs.org/" >&2; exit 1; }
+	@command -v yq >/dev/null 2>&1 || { echo "Error: yq not found. Install yq: https://github.com/mikefarah/yq#install" >&2; exit 1; }
 
 check:
 	@echo "--- check: shellcheck vendor/ examples/ ---"
@@ -10,26 +12,38 @@ check:
 	find ./examples -type f | xargs $(SHELLCHECK) -s sh -e SC1091
 	@echo "--- check: done ---"
 
-fmt:
+fmt: check-deps
 	@echo "--- fmt: prettier on markdown ---"
 	npx prettier --write '**/*.md'
 	npx prettier --write '**/*.json'
 	@echo "--- fmt: done ---"
 
-bump-major bump-minor bump-patch:
+bump-major bump-minor bump-patch: check-deps
 	@if [ -n "$$(git status --porcelain)" ]; then echo "Error: uncommitted changes in repo" >&2; exit 1; fi
 	@PART=$$(echo $@ | sed 's/bump-//'); \
 	OLD=$$(cat VERSION); \
 	NEW=$$(sh ./vendor/semver bump $$PART "$$OLD") || { echo "Error: semver bump failed" >&2; exit 1; }; \
 	if [ -z "$$NEW" ]; then echo "Error: semver returned empty version" >&2; exit 1; fi; \
 	echo "--- $@: $$PART $$OLD -> $$NEW ---"; \
-	printf '%s\n' "$$NEW" > VERSION; \
-	git add VERSION || { echo "Error: git add failed" >&2; exit 1; }; \
+	printf '%s\n' "$$NEW" > VERSION
+	@$(MAKE) set-skill-version
+	@git add VERSION SKILL.md || { echo "Error: git add failed" >&2; exit 1; }; \
+	NEW=$$(cat VERSION); \
 	git commit -m "v$$NEW" || { echo "Error: git commit failed" >&2; exit 1; }; \
 	echo "--- $@: verify ---"; \
 	cat VERSION; \
 	git --no-pager log --oneline -1; \
 	echo "--- $@: done ---"
+
+set-skill-version: check-deps
+	@V=$$(cat VERSION); \
+	yq -i ".metadata.version = \"$$V\"" SKILL.md; \
+	echo "--- set-skill-version: SKILL.md -> $$V ---"
+
+update-skills: check-deps
+	@echo "--- update-skills ---"
+	npx skills update --all -y
+	@echo "--- update-skills: done ---"
 
 tag:
 	@if [ -n "$$(git status --porcelain)" ]; then echo "Error: uncommitted changes in repo" >&2; exit 1; fi

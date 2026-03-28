@@ -39,10 +39,10 @@ without a clear workflow. Shellcraft takes a different approach:
 
 ## Installation
 
-### Skillfish
+### Vercel Skills CLI
 
 ```sh
-skillfish add thesmart/shellcraft
+npx skills add thesmart/shellcraft
 ```
 
 ### Manual
@@ -52,6 +52,18 @@ Clone into your Claude Code skills directory:
 ```sh
 git clone https://github.com/thesmart/shellcraft.git ~/.claude/skills/shellcraft
 ```
+
+---
+
+## Development Dependencies
+
+- [Node.js / npx](https://nodejs.org/) — used for prettier formatting, skills management
+- [yq](https://github.com/mikefarah/yq#install) — used for YAML frontmatter updates in SKILL.md
+
+### Agent Skill Dependencies
+
+- [skill-creator](https://github.com/anthropics/skills) — skill creation, evaluation, and
+  optimization
 
 ---
 

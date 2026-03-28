@@ -6,4 +6,4 @@ Thumbs.db
 *.env
 
 # Project
-coverage
+.agents/skills/**/
