@@ -15,13 +15,7 @@ directly.
 
 ## Using Vendor Scripts
 
-To understand how a vendor script works, run it with `--help`:
+To understand how a vendor script works, run it with `--help`. This is the preferred way to learn a
+script's interface, flags, and usage without reading its source.
 
-```sh
-vendor/inline --help
-vendor/semver --help
-vendor/set-skill-version --help
-```
-
-This is the preferred way to learn a script's interface, flags, and usage without reading its
-source.
+You can also read about vendor libs by reading `shell_modules/*.md`.
