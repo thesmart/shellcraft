@@ -133,14 +133,14 @@ Declare a subcommand. Only valid when `setup` uses `REST`. See [Subcommands](#su
 
 | Attribute            | Applies to       | Effect                                         |
 | -------------------- | ---------------- | ---------------------------------------------- |
-| `on:VAL`             | flag, option     | value when flag is set / option has no `=`     |
+| `on:VAL`             | flag, option     | value when flag is set / option used without = |
 | `no:VAL`             | flag, option     | value when negated (`--no-X`, `+x`)            |
 | `init:=VAL`          | flag, param, opt | initial value (`=` prefix for literal)         |
-| `validate:FN`        | param, option    | call `FN`; nonzero return = validation failure |
+| `validate:FN`        | param, option    | call `FN`; nonzero = validation failure        |
 | `validate:'FN args'` | param, option    | validator with extra arguments                 |
 | `pattern:'a \| b'`   | param, option    | restrict value to case pattern                 |
 | `counter:true`       | flag             | increment on each occurrence                   |
-| `export:true`        | any              | export this variable (or `export:` to disable) |
+| `export:true`        | any              | export this variable                           |
 | `hidden:true`        | any              | hide from help output                          |
 | `label:TEXT`         | any              | custom help label                              |
 | `var:NAME`           | param, option    | metavar in help (e.g. `var:FILE`)              |
@@ -264,8 +264,7 @@ number() { case $OPTARG in (*[!0-9]*) return 1 ;; esac; }
 
 range() {
   number || return 1
-  [ "$1" -le "$OPTARG" ] && [ "$OPTARG" -le "$2" ] && return 0
-  return 2
+  [ "$1" -le "$OPTARG" ] && [ "$OPTARG" -le "$2" ]
 }
 
 # normalizing validator — transforms input
@@ -345,10 +344,7 @@ param :add_config -c var:KEY=VALUE -- "set config key=value"
 ```
 
 ```sh
-add_config() {
-  key="${OPTARG%%=*}"
-  val="${OPTARG#*=}"
-}
+add_config() { key="${OPTARG%%=*}"; val="${OPTARG#*=}"; }
 ```
 
 ### Examples
