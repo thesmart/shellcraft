@@ -54,24 +54,24 @@ Read these additional references only when the script requires them:
 All conventions and utilities target **POSIX.1-2017** (IEEE Std 1003.1-2017), Shell & Utilities
 volume.
 
-Follow these steps to generate a portable, well-structured POSIX `sh` shell script.
+Follow these steps to author the target script.
 
 ### Step 1: Make a Plan
 
 1. Define the goal clearly
-   1. Write one-sentence summary: what the script does.
+   1. Write one-sentence summary: what the target script does.
       - If not succinctly clear, maybe script is too complex?
    2. Use the summary to name the script file
-2. Identify details re: inputs and outputs.
+2. Identify the target script's arguments and outputs.
 3. Consider edge cases and failure modes.
 4. Outline the control flow.
    1. major steps in plain language and/or pseudocode
    2. consider loops, pipelines, subshells, tmp files, traps, cleanup
    3. choose external utilities if needed, try to stick w/ built-ins
-5. Decide if the script needs option parsing:
+5. Decide if the target script needs parameter parsing:
    - **Yes** — script has flags, named params, or subcommands: use `getoptions-3.3.2.sh`
    - **No** — script only takes positional arguments: skip getoptions, define `usage()` manually
-6. Write an example of how an end-user would use the script to accomplish the goal.
+6. Write an example of how an end-user would use the target script to accomplish the goal.
 
 Evaluate the plan and ensure the it aligns with end-user's stated intent.
 
@@ -82,8 +82,8 @@ Follow the plan and write the script using the appropriate template. Make the sc
 
 #### With Option Parsing
 
-Script has flags, named params, or subcommands — use `getoptions-3.3.2.sh`
-(see [vendor/getoptions-3.3.2.md](../vendor/getoptions-3.3.2.md)):
+Target script has flags, named params, or subcommands — use `getoptions-3.3.2.sh` (vendor context
+file: [vendor/getoptions-3.3.2.md](../vendor/getoptions-3.3.2.md)):
 
 ```sh
 #!/bin/sh

@@ -310,7 +310,7 @@ param :add_header -H --header init:'HEADERS=""' var:HEADER -- "HTTP header (repe
 add_header() { HEADERS="${HEADERS}${HEADERS:+ }${OPTARG}"; }
 ```
 
-For POSIX array accumulation and action functions with parameters, see
+For POSIX array accumulation and action functions with arguments, see
 [advanced](./getoptions-advanced.md).
 
 #### Mutually exclusive mode flags

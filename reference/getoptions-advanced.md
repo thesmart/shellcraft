@@ -61,7 +61,7 @@ append_array_posix() {
 eval disp_array PARRAY "$PARRAY"
 ```
 
-### Action with Parameters
+### Action with Arguments
 
 Pass extra arguments to an action function:
 

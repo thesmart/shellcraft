@@ -1,5 +1,9 @@
 # [getoptions] License: Creative Commons Zero v1.0 Universal
 # https://github.com/ko1nksm/getoptions (v3.3.2)
+# [agent] Do not read this file, read the context file instead:
+#   ./getoptions-3.3.2.md  (relative)
+#   https://raw.githubusercontent.com/thesmart/shellcraft/refs/tags/v{VERSION}/vendor/getoptions-3.3.2.md  (fallback)
+# [agent] Stop reading.
 getoptions() {
 	_error="" _on=1 _no="" _export="" _plus="" _mode="" _alt="" _rest="" _def=""
 	_flags="" _nflags="" _opts="" _help="" _abbr="" _cmds="" _init=@empty IFS=" "
