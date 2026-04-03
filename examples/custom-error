@@ -3,7 +3,7 @@
 die() { printf '%s\n' "error: $*" >&2; exit 1; }
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/../vendor/getoptions.sh" # @inline getoptions
+. "${SCRIPT_DIR}/path/to/vendor/getoptions-3.3.2.sh" # @inline getoptions
 
 parser_definition() {
 	setup   REST error:error help:usage -- \

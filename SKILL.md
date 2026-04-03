@@ -1,6 +1,11 @@
 ---
 name: shellcraft
-description: "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script, bash script, CLI tool, command-line tool, getoptions, argument parsing, Makefile recipe, cron job, init script, git hook, CI/CD shell step, deployment script, automation task. Do NOT activate for Python, Node.js, or other non-shell scripting tasks."
+description:
+  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and
+  production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script,
+  bash script, CLI tool, command-line tool, getoptions, argument parsing, Makefile recipe, cron
+  job, init script, git hook, CI/CD shell step, deployment script, automation task. Do NOT activate
+  for Python, Node.js, or other non-shell scripting tasks."
 license: PolyForm Internal Use License 1.0.0
 compatibility: Designed for Claude Code (and compatible)
 metadata:
@@ -63,13 +68,22 @@ Follow these steps to generate a portable, well-structured POSIX `sh` shell scri
    1. major steps in plain language and/or pseudocode
    2. consider loops, pipelines, subshells, tmp files, traps, cleanup
    3. choose external utilities if needed, try to stick w/ built-ins
-5. Write an example of how an end-user would use the script to accomplish the goal.
+5. Decide if the script needs option parsing:
+   - **Yes** — script has flags, named params, or subcommands: use `getoptions-3.3.2.sh`
+   - **No** — script only takes positional arguments: skip getoptions, define `usage()` manually
+6. Write an example of how an end-user would use the script to accomplish the goal.
 
 Evaluate the plan and ensure the it aligns with end-user's stated intent.
 
 ### Step 2: Write the Script
 
-Follow the plan and write the script using this template:
+Follow the plan and write the script using the appropriate template. Make the script executable
+(`chmod ug+x`) if needed.
+
+#### With Option Parsing
+
+Script has flags, named params, or subcommands — use `getoptions-3.3.2.sh`
+(see [vendor/getoptions-3.3.2.md](../vendor/getoptions-3.3.2.md)):
 
 ```sh
 #!/bin/sh
@@ -81,9 +95,7 @@ die() { printf '%s\n' "error: $*" >&2; exit 1; }
 # --- imports (see: reference/imports.md) ---
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-# standalone: tag with @inline for build step:
-#  . "${SCRIPT_DIR}/path/to/getoptions.sh" # @inline getoptions
-. "${SCRIPT_DIR}/path/to/getoptions.sh"
+. "${SCRIPT_DIR}/path/to/getoptions-3.3.2.sh" # @inline getoptions
 
 # --- getoptions ---
 
@@ -94,9 +106,8 @@ parser_definition() {
    disp :usage -h --help
 }
 
-# If script requires any arguments, uncomment next line:
+# If script requires arguments, uncomment next line:
 # [ $# -eq 0 ] && set -- --help
-# Omit if script has works with zero arguments.
 
 eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
 
@@ -106,7 +117,30 @@ eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
 
 ```
 
-Make the script executable (`chmod ug+x`) if needed.
+#### Without Option Parsing
+
+Script takes only positional arguments — no import needed, define help manually:
+
+```sh
+#!/bin/sh
+
+# --- helpers ---
+
+die() { printf '%s\n' "error: $*" >&2; exit 1; }
+
+usage() {
+   printf 'Usage: {{SCRIPT_NAME}} <arg1> [arg2]\n'
+   printf '\n'
+   printf 'Description of what the script does.\n'
+}
+
+case ${1-} in --help|-h) usage; exit 0 ;; esac
+
+# --- script ---
+
+# WRITE SCRIPT HERE
+
+```
 
 ### Step 3: Verification
 

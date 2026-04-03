@@ -21,4 +21,6 @@ Makefile                   # repo tasks that use bin/ scripts
 VERSION                    # canonical semver for the project
 ```
 
+---
+
 @reference/conventions.md

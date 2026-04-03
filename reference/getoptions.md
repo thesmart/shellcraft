@@ -1,23 +1,28 @@
 ## getoptions
 
-`./vendor/getoptions.sh` is the options parser library.
+`./vendor/getoptions-3.3.2.sh` is an option parser and generator.
 
-> WARNING: **DO NOT** waste tokens reading `getoptions.sh` unless explicitly asked to. This file
-> provides the context.
+> WARNING: **DO NOT** waste tokens reading `getoptions-3.3.2.sh` unless explicitly asked to. This
+> file provides the context.
 
-### How It Works
+### How to Use
 
-`getoptions` is a code generator. You define a `parser_definition` function using directives
-(`flag`, `param`, `option`, `disp`, `msg`, `cmd`). Calling `getoptions` with that definition
-produces a shell parser function as a string. You `eval` it to install the parser, then it
-processes `$@` in place.
+1. Source the library (see [imports](./imports.md)):
 
-```sh
-eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
-```
+   ```sh
+   SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+   . "${SCRIPT_DIR}/path/to/vendor/getoptions-3.3.2.sh"
+   ```
 
-The `- "$0"` arguments: `-` means use the default parser name, `"$0"` is the script name for error
-messages. After eval, `$@` contains only positional arguments (options are consumed).
+2. Define a `parser_definition` function using directives (`flag`, `param`, `option`, `disp`,
+   `msg`, `cmd`).
+
+3. Install the parser — this processes `$@` in place; after this line, options are consumed and
+   `$@` contains only positional arguments:
+   ```sh
+   eval "$(getoptions parser_definition - "$0") die 'failed to parse arguments'"
+   ```
+   `-` = default parser name, `"$0"` = script name for error messages.
 
 ### Feature Guide
 
@@ -77,8 +82,6 @@ flag  FLAG_W         --with{out}-flag                  -- "expands to --with-fla
 flag  VERBOSE  -v    --verbose  counter:true init:=0   -- "-vvv sets VERBOSE=3"
 ```
 
-- `--{no-}name` expands to `--name` and `--no-name`
-- `--with{out}-name` expands to `--with-name` and `--without-name`
 - `+f` syntax requires `plus:true` in setup; sets the `no` value
 - `counter:true` increments instead of setting; use with `init:=0`
 
@@ -95,8 +98,7 @@ param  PATTERN    --pattern  pattern:'foo | bar'       -- "restricted to pattern
 
 #### `option VAR SHORT LONG [attrs...] -- "description"`
 
-Optional value. With `--option=val` the value is `val`; without `=`, gets the `on` value; with
-`--no-option`, gets the `no` value.
+Optional value. `--option=val` → val; `--option` → `on` value; `--no-option` → `no` value.
 
 ```sh
 option OPTION  -o --option  on:"default"               -- "optional value flag"
@@ -166,46 +168,18 @@ param OUTFILE -o --output var:FILE -- "write output to FILE" \
 `width:N` in `setup` controls the label column width (default 30). Use `var:NAME` to set the
 metavar shown after param/option labels (e.g. `--output FILE`).
 
-The generated help looks like:
-
-```
-Usage: tool [options...] [arguments...]
-
-Options:
-  -v, --verbose              enable verbose output
-  -o, --output FILE          write output to FILE
-                             (default: stdout)
-  -h, --help
-```
-
 ### Positional Arguments
 
 After `eval getoptions`, all options are consumed and `$@` contains only positional arguments.
-Access them by position or iterate:
 
 ```sh
-# by position
-input="$1"
-output="$2"
-
-# validate count
+input="$1"; output="$2"
 [ $# -ge 1 ] || die "missing required argument: <input>"
-
-# iterate
-for file do
-  printf '%s\n' "$file"
-done
+for file do printf '%s\n' "$file"; done
 ```
 
 The `--` separator terminates option parsing — everything after it is positional, even if it looks
-like a flag. This is handled automatically.
-
-```sh
-# user passes: tool --verbose -- --not-a-flag file.txt
-# after parsing: $1="--not-a-flag"  $2="file.txt"  VERBOSE=1
-```
-
-For wrapper scripts, this means `"$@"` after parsing contains exactly the args to pass through
+like a flag. For wrapper scripts, `"$@"` after parsing contains exactly the args to pass through
 (e.g. `exec "$@"`).
 
 ### Subcommands
@@ -329,9 +303,6 @@ repeatable options, mutual exclusion guards, and key=value parsing.
 
 #### Repeatable option (accumulate values)
 
-Used by: curl (`-H`), grep (`-e`), sed (`-e`), rsync (`--exclude`), kubectl (`-f`), and many
-others:
-
 ```sh
 param :add_header -H --header init:'HEADERS=""' var:HEADER -- "HTTP header (repeatable)"
 ```
@@ -345,8 +316,7 @@ For POSIX array accumulation and action functions with parameters, see
 
 #### Mutually exclusive mode flags
 
-Used by: tar (`-c`/`-x`/`-t`). Multiple flags write to the same variable with different `on:`
-values. Last flag wins:
+Multiple flags write to the same variable with different `on:` values. Last flag wins:
 
 ```sh
 flag MODE -c on:create  -- "create archive"
@@ -368,8 +338,7 @@ set_mode() { [ -z "$MODE" ] || die "cannot combine -c, -x, -t"; MODE="$OPTARG"; 
 
 #### Key=value params (`-c name=value`)
 
-Used by: git (`-c`), awk (`-v`), psql (`-v`). `param` captures the entire string; split on `=` in a
-helper:
+`param` captures the entire string; split on `=` in a helper:
 
 ```sh
 param :add_config -c var:KEY=VALUE -- "set config key=value"
@@ -379,7 +348,6 @@ param :add_config -c var:KEY=VALUE -- "set config key=value"
 add_config() {
   key="${OPTARG%%=*}"
   val="${OPTARG#*=}"
-  # store, validate, or accumulate as needed
 }
 ```
 

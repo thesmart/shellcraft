@@ -1,4 +1,4 @@
-# Imports
+# How to Import Libraries
 
 Shell scripts import libraries by sourcing them. Every source line should resolve paths relative to
 `SCRIPT_DIR`:
