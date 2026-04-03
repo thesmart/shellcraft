@@ -71,7 +71,16 @@ Follow these steps to author the target script.
 5. Decide if the target script needs parameter parsing:
    - **Yes** — script has flags, named params, or subcommands: use `getoptions-3.3.2.sh`
    - **No** — script only takes positional arguments: skip getoptions, define `usage()` manually
-6. Write an example of how an end-user would use the target script to accomplish the goal.
+6. Decide the dependency bundling strategy (when using vendor libs):
+   - **bundled** (default) — copy `getoptions-3.3.2.sh` + `getoptions-3.3.2.md` to
+     `shell_modules/` alongside the script. Add to VCS; shared by all scripts in that directory.
+   - **inlined** — embed the lib directly into the script via `vendor/inline`. Use when the script
+     must be self-contained (distributed binary, `curl | sh`, CI without a repo).
+   - **none** — no vendor libs; parse manually. Use when named options are trivial or absent.
+
+   Infer the right strategy automatically: portability/distribution → inlined; project repo →
+   bundled; minimal options → none. If genuinely unclear, ask the end-user.
+7. Write an example of how an end-user would use the target script to accomplish the goal.
 
 Evaluate the plan and ensure the it aligns with end-user's stated intent.
 
@@ -95,7 +104,7 @@ die() { printf '%s\n' "error: $*" >&2; exit 1; }
 # --- imports (see: reference/imports.md) ---
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${SCRIPT_DIR}/path/to/getoptions-3.3.2.sh" # @inline getoptions
+. "${SCRIPT_DIR}/shell_modules/getoptions-3.3.2.sh" # @inline getoptions
 
 # --- getoptions ---
 
@@ -153,13 +162,28 @@ case ${1-} in --help|-h) usage; exit 0 ;; esac
 
 Fix any issues encountered and try again.
 
-### Step 4: Build (standalone only)
+### Step 4: Bundle Dependencies
 
-Skip this step for library scripts. For standalone scripts, inline all `@inline`-tagged imports:
+Skip this step for shell libs. Execute the strategy chosen in Step 1:
+
+**bundled** — copy vendor libs and their context files to `shell_modules/`:
+
+```console
+cp vendor/getoptions-3.3.2.sh  shell_modules/
+cp vendor/getoptions-3.3.2.md  shell_modules/
+```
+
+The `shell_modules/` directory is a sibling of the target script. The `.md` context file is
+essential — it lets future agents understand the dependency without access to the shellcraft skill.
+Commit `shell_modules/` to VCS alongside the script.
+
+**inlined** — embed all `@inline`-tagged imports into a distributable single-file build:
 
 ```console
 vendor/inline --target path/to/script --inline path/to/lib.sh --key <key> --overwrite
 ```
+
+**none** — no build step needed.
 
 ### Step 5: Install
 
