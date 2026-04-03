@@ -1,16 +1,11 @@
 ---
 name: shellcraft
-description:
-  "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and
-  production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script,
-  bash script, CLI tool, command-line tool, getoptions, argument parsing, Makefile recipe, cron
-  job, init script, git hook, CI/CD shell step, deployment script, automation task. Do NOT activate
-  for Python, Node.js, or other non-shell scripting tasks."
+description: "Writes portable POSIX sh scripts with getoptions argument parsing, single-file builds, and production patterns (traps, temp files, logging, pipelines). Triggers: shell script, sh script, bash script, CLI tool, command-line tool, getoptions, argument parsing, Makefile recipe, cron job, init script, git hook, CI/CD shell step, deployment script, automation task. Do NOT activate for Python, Node.js, or other non-shell scripting tasks."
 license: PolyForm Internal Use License 1.0.0
 compatibility: Designed for Claude Code (and compatible)
 metadata:
   author: github.com/thesmart
-  version: "1.3.0"
+  version: "2.0.0"
 ---
 
 # Agent Skill: Shellcraft
