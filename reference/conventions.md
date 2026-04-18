@@ -100,3 +100,45 @@ positional     = TOKEN ;
    terminates option parsing — everything after it
    is collected as positional arguments in `$@`. *)
 ```
+
+#### File Argument Validation
+
+**ALWAYS, EXPLICITLY** validate file/directory args early with `die`, before real work. Skip
+emptiness, symlinks, and extensions — focus on safety not business logic.
+
+**File input:**
+
+```sh
+[ -e "$FILE" ] || die "file not found: $FILE"
+[ -f "$FILE" ] || die "not a regular file: $FILE"
+[ -r "$FILE" ] || die "file not readable: $FILE"
+```
+
+**Directory input:**
+
+```sh
+[ -e "$DIR" ] || die "directory not found: $DIR"
+[ -d "$DIR" ] || die "not a directory: $DIR"
+[ -r "$DIR" ] || die "directory not readable: $DIR"
+[ -x "$DIR" ] || die "directory not traversable: $DIR"
+```
+
+**File output:**
+
+```sh
+_outdir="$(dirname "$FILE")"
+[ -d "$_outdir" ] || die "parent directory not found: $_outdir"
+[ -w "$_outdir" ] || die "parent directory not writable: $_outdir"
+if [ -e "$FILE" ]; then
+  [ -f "$FILE" ] || die "not a regular file: $FILE"
+  [ -w "$FILE" ] || die "file not writable: $FILE"
+fi
+```
+
+**Directory output:**
+
+```sh
+[ -e "$DIR" ] || die "directory not found: $DIR"
+[ -d "$DIR" ] || die "not a directory: $DIR"
+[ -w "$DIR" ] || die "directory not writable: $DIR"
+```

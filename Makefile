@@ -1,15 +1,21 @@
-SHELLCHECK = shellcheck
+.PHONY: build check check-deps dep-node dep-npx dep-python dep-skillcost fmt bump-major bump-minor bump-patch set-skill-version update-skills tag tokens test
 
-.PHONY: check check-deps fmt bump-major bump-minor bump-patch set-skill-version update-skills tag tokens
+dep-node:
+	@command -v node >/dev/null 2>&1 || { echo "Error: node not found. Install Node.js 24+: https://nodejs.org/" >&2; exit 1; }
+	@node -e 'process.exit(parseInt(process.versions.node.split(".")[0], 10) >= 24 ? 0 : 1)' || { echo "Error: node >= 24 required (found $$(node --version))" >&2; exit 1; }
 
-check-deps:
+dep-npx:
 	@command -v npx >/dev/null 2>&1 || { echo "Error: npx not found. Install Node.js: https://nodejs.org/" >&2; exit 1; }
 
-check:
-	@echo "--- check: shellcheck vendor/ examples/ ---"
-	find ./vendor -name '*.sh' | xargs $(SHELLCHECK) -s sh -e SC1091
-	find ./examples -type f | xargs $(SHELLCHECK) -s sh -e SC1091
-	@echo "--- check: done ---"
+dep-skillcost:
+	@command -v skillcost >/dev/null 2>&1 || { echo "Error: skillcost not found. Install: pip install skillcost  (or: uv tool install skillcost)" >&2; exit 1; }
+
+check-deps: dep-npx dep-node
+
+build: dep-node
+	@echo "--- build: SKILL.tmpl.md -> SKILL.md ---"
+	node scripts/build.js SKILL.tmpl.md > SKILL.md
+	@echo "--- build: done ---"
 
 fmt: check-deps
 	@echo "--- fmt: prettier on markdown ---"
@@ -36,6 +42,7 @@ bump-major bump-minor bump-patch: check-deps
 
 set-skill-version:
 	@vendor/set-skill-version SKILL.md "$$(cat VERSION)"
+	@vendor/set-skill-version SKILL.tmpl.md "$$(cat VERSION)"
 
 update-skills: check-deps
 	@echo "--- update-skills ---"
@@ -55,17 +62,10 @@ tag:
 	git push origin "$$TAG"; \
 	echo "--- tag: done ---"
 
-tokens:
-	@FILES="SKILL.md $$(sed -n 's|.*](\./\([^)]*\.md\)).*|\1|p' SKILL.md)"; \
-	TOTAL=0; \
-	for f in $$FILES; do \
-		if [ -f "$$f" ]; then \
-			CHARS=$$(wc -c < "$$f"); \
-			TOKS=$$((CHARS / 4)); \
-			TOTAL=$$((TOTAL + TOKS)); \
-			printf '  %6d tokens  %s\n' "$$TOKS" "$$f"; \
-		else \
-			echo "  (missing: $$f)"; \
-		fi; \
-	done; \
-	printf '  %6d tokens  TOTAL (estimated)\n' "$$TOTAL"
+tokens: dep-skillcost
+	@skillcost SKILL.md
+
+test: dep-node
+	@echo "--- test: node --test scripts/*.test.js ---"
+	node --test scripts/*.test.js
+	@echo "--- test: done ---"

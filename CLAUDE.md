@@ -36,7 +36,3 @@ Read [`README.md`](./README.md) for project specification.
 | flags, options, arguments, parameters, CLI inputs | **arguments**           | The command-line args declared in `parser_definition()` and parsed by `getoptions`.                               |
 | vendor libs                                       | **vendor lib**          | A third-party shell file (`.sh`) under `vendor/`, provided as is for use by the skill.                            |
 | vendor context                                    | **vendor context file** | A Markdown (`.md`) file co-located with a vendor lib that documents its API. Read this instead of the lib source. |
-
----
-
-@reference/conventions.md

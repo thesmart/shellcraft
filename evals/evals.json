@@ -7,16 +7,30 @@
       "expected_output": "A POSIX sh script named 'backup' using getoptions for --src, --dest, --dry-run, --verbose. Creates a timestamped tarball. Handles --help, writes errors to stderr, exits with correct codes.",
       "files": [],
       "assertions": [
-        {"text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"},
-        {"text": "syntax_valid: sh -n backup exits 0 (no syntax errors)"},
-        {"text": "uses_getoptions: Script sources getoptions-3.3.2.sh"},
-        {"text": "has_src_dest_options: parser_definition declares both --src and --dest params"},
-        {"text": "has_dry_run_flag: parser_definition declares --dry-run flag"},
-        {"text": "has_verbose_flag: parser_definition declares --verbose flag"},
-        {"text": "has_die_helper: Script defines a die() function"},
-        {"text": "errors_to_stderr: Error messages are written to stderr using >&2"},
-        {"text": "uses_timestamp: Output filename includes a timestamp (date command or similar)"},
-        {"text": "creates_tarball: Script uses tar to create a .tar.gz archive"}
+        {
+          "text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"
+        },
+        { "text": "syntax_valid: sh -n backup exits 0 (no syntax errors)" },
+        { "text": "uses_getoptions: Script sources getoptions-3.3.2.sh" },
+        {
+          "text": "has_src_dest_options: parser_definition declares both --src and --dest params"
+        },
+        {
+          "text": "has_dry_run_flag: parser_definition declares --dry-run flag"
+        },
+        {
+          "text": "has_verbose_flag: parser_definition declares --verbose flag"
+        },
+        { "text": "has_die_helper: Script defines a die() function" },
+        {
+          "text": "errors_to_stderr: Error messages are written to stderr using >&2"
+        },
+        {
+          "text": "uses_timestamp: Output filename includes a timestamp (date command or similar)"
+        },
+        {
+          "text": "creates_tarball: Script uses tar to create a .tar.gz archive"
+        }
       ]
     },
     {
@@ -25,16 +39,28 @@
       "expected_output": "A POSIX sh script named 'wait-for' with getoptions parsing for --timeout and --interval, a retry/poll loop using curl, progress output to stderr, and exit 1 on timeout.",
       "files": [],
       "assertions": [
-        {"text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"},
-        {"text": "syntax_valid: sh -n wait-for exits 0 (no syntax errors)"},
-        {"text": "uses_getoptions: Script sources getoptions-3.3.2.sh"},
-        {"text": "has_timeout_option: parser_definition declares --timeout param with default value of 60"},
-        {"text": "has_interval_option: parser_definition declares --interval param with default value of 5"},
-        {"text": "has_die_helper: Script defines a die() function"},
-        {"text": "uses_curl: Script uses curl to make HTTP requests"},
-        {"text": "exits_1_on_timeout: Script explicitly exits with code 1 when timeout is reached"},
-        {"text": "progress_to_stderr: Progress/status messages are written to stderr using >&2"},
-        {"text": "has_poll_loop: Script contains a loop (while/until) for polling"}
+        {
+          "text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"
+        },
+        { "text": "syntax_valid: sh -n wait-for exits 0 (no syntax errors)" },
+        { "text": "uses_getoptions: Script sources getoptions-3.3.2.sh" },
+        {
+          "text": "has_timeout_option: parser_definition declares --timeout param with default value of 60"
+        },
+        {
+          "text": "has_interval_option: parser_definition declares --interval param with default value of 5"
+        },
+        { "text": "has_die_helper: Script defines a die() function" },
+        { "text": "uses_curl: Script uses curl to make HTTP requests" },
+        {
+          "text": "exits_1_on_timeout: Script explicitly exits with code 1 when timeout is reached"
+        },
+        {
+          "text": "progress_to_stderr: Progress/status messages are written to stderr using >&2"
+        },
+        {
+          "text": "has_poll_loop: Script contains a loop (while/until) for polling"
+        }
       ]
     },
     {
@@ -43,15 +69,27 @@
       "expected_output": "A POSIX sh script named 'csv-field' using getoptions for --field and --delimiter, reads stdin or file arg, uses cut or awk for field extraction, handles missing fields, writes errors to stderr.",
       "files": [],
       "assertions": [
-        {"text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"},
-        {"text": "syntax_valid: sh -n csv-field exits 0 (no syntax errors)"},
-        {"text": "uses_getoptions: Script sources getoptions-3.3.2.sh"},
-        {"text": "has_field_option: parser_definition declares --field as a required param"},
-        {"text": "has_delimiter_option: parser_definition declares --delimiter param with comma as default"},
-        {"text": "has_die_helper: Script defines a die() function"},
-        {"text": "reads_stdin_or_file: Script handles both stdin (no file arg) and a positional file argument"},
-        {"text": "handles_missing_field: Script has logic to detect or handle a missing/empty field gracefully"},
-        {"text": "errors_to_stderr: Error messages are written to stderr using >&2"}
+        {
+          "text": "shebang_posix: First line is #!/bin/sh (not #!/bin/bash or #!/usr/bin/env bash)"
+        },
+        { "text": "syntax_valid: sh -n csv-field exits 0 (no syntax errors)" },
+        { "text": "uses_getoptions: Script sources getoptions-3.3.2.sh" },
+        {
+          "text": "has_field_option: parser_definition declares --field as a required param"
+        },
+        {
+          "text": "has_delimiter_option: parser_definition declares --delimiter param with comma as default"
+        },
+        { "text": "has_die_helper: Script defines a die() function" },
+        {
+          "text": "reads_stdin_or_file: Script handles both stdin (no file arg) and a positional file argument"
+        },
+        {
+          "text": "handles_missing_field: Script has logic to detect or handle a missing/empty field gracefully"
+        },
+        {
+          "text": "errors_to_stderr: Error messages are written to stderr using >&2"
+        }
       ]
     }
   ]
